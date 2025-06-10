@@ -13,19 +13,16 @@ import expressFileupload from "express-fileupload";
 import { notifyUsers } from "../services/notifyUsers.js";
 import { removeUnverifiedAccounts } from "../services/removeUnverifiedAccounts.js";
 
-// Load .env config
 dotenv.config({ path: "./.env" });
 
 const app = express();
 
-// Cloudinary config
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLIENT_NAME,
   api_key: process.env.CLOUDINARY_CLIENT_API,
   api_secret: process.env.CLOUDINARY_CLIENT_SECRET
 });
 
-// Middleware
 app.use(cors({
   origin: '*',
   methods: ["GET", "POST", "PUT", "DELETE"],
@@ -39,7 +36,6 @@ app.use(expressFileupload({
   tempFileDir: "/tmp/"
 }));
 
-// Health check
 app.get('/health', (req, res) => {
   res.status(200).json({
     status: 'OK',
@@ -52,19 +48,15 @@ app.get('/', (req, res) => {
   res.send('📚 Library Management System API is running!');
 });
 
-// Routes
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/book", bookRouter);
 app.use("/api/v1/borrow", borrowRouter);
 app.use("/api/v1/user", userRouter);
 
-// DB & services
 connectDB();
 notifyUsers();
 removeUnverifiedAccounts();
 
-// Error handling
 app.use(errorMiddleware);
 
-// ✅ Export app (IMPORTANT for Vercel)
 export default app;
