@@ -36,6 +36,10 @@ app.use(expressFileupload({
   tempFileDir: "/tmp/"
 }));
 
+app.get('/', (req, res) => {
+  res.send('📚 Library Management System API is running!');
+});
+
 app.get('/health', (req, res) => {
   res.status(200).json({
     status: 'OK',
