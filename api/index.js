@@ -26,9 +26,9 @@ cloudinary.config({
 });
 
 app.use(cors({
-  origin: '*',
+  origin: ["https://lms-frontend-mocha-seven.vercel.app/"],
   methods: ["GET", "POST", "PUT", "DELETE"],
-  credentials: false
+  credentials: true
 }));
 app.use(cookieParser());
 app.use(express.json());
