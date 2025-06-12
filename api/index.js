@@ -1,5 +1,7 @@
 import express from "express";
 import dotenv from "dotenv";
+import path from "path";
+import { fileURLToPath } from "url";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import { connectDB } from "../database/db.js";
@@ -12,24 +14,36 @@ import userRouter from "../routes/userRouter.js";
 import expressFileupload from "express-fileupload";
 import { notifyUsers } from "../services/notifyUsers.js";
 import { removeUnverifiedAccounts } from "../services/removeUnverifiedAccounts.js";
-import { createServer } from "http";
-import { parse } from "url";
 
-dotenv.config({ path: "./.env" });
+// Get __dirname equivalent in ES Modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// ✅ Load .env from root directory
+dotenv.config({ path: path.join(__dirname, "../.env") });
+
+// Debug log to confirm env variables are loaded
+console.log("🔍 MONGO_URI is:", process.env.MONGO_URI);
 
 const app = express();
 
+// ✅ Configure Cloudinary
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLIENT_NAME,
   api_key: process.env.CLOUDINARY_CLIENT_API,
-  api_secret: process.env.CLOUDINARY_CLIENT_SECRET
+  api_secret: process.env.CLOUDINARY_CLIENT_SECRET,
 });
 
+// ✅ Middleware setup
 app.use(cors({
-  origin: ["https://lms-frontend-beta-nine.vercel.app","http://localhost:5173"],
+  origin: [
+    "https://lms-frontend-beta-nine.vercel.app",
+    "http://localhost:5173"
+  ],
   methods: ["GET", "POST", "PUT", "DELETE"],
-  credentials: true
+  credentials: true,
 }));
+
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -38,6 +52,7 @@ app.use(expressFileupload({
   tempFileDir: "/tmp/"
 }));
 
+// ✅ Routes
 app.get('/', (req, res) => {
   res.send(`
     <h1>✅ Your Backend API is Live</h1>
@@ -58,18 +73,19 @@ app.use("/api/v1/book", bookRouter);
 app.use("/api/v1/borrow", borrowRouter);
 app.use("/api/v1/user", userRouter);
 
-connectDB();
+// ✅ Connect to DB & schedule jobs
+await connectDB();
 notifyUsers();
 removeUnverifiedAccounts();
 
+// ✅ Global error handler
 app.use(errorMiddleware);
 
-
-
+// ✅ Start Server
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
   console.log(`🚀 Server is running on http://localhost:${PORT}`);
 });
 
-// ✅ This is the only export needed for Vercel serverless
+// ✅ Export app for Vercel serverless
 export default app;
