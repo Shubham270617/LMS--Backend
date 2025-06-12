@@ -126,13 +126,14 @@ export const login = catchAsyncErrors(async (req, res, next) => {
 });
 
 export const logout = catchAsyncErrors(async (req, res, next) => {
+  const isProduction = process.env.NODE_ENV === "production";
   res
     .status(200)
     .cookie("token", "", {
       expires: new Date(Date.now()),
       httpOnly: true,
-      sameSite: "none",   // ✅ Required for Vercel / HTTPS frontend
-      secure: true        // ✅ Must match the original set-cookie flags
+       sameSite: isProduction ? "none" : "lax",
+      secure: isProduction
     })
     .json({
       success: true,
