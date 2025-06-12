@@ -26,7 +26,7 @@ cloudinary.config({
 });
 
 app.use(cors({
-  origin: ["https://lms-frontend-mocha-seven.vercel.app","http://localhost:5173"],
+  origin: ["https://lms-frontend-beta-nine.vercel.app","http://localhost:5173"],
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true
 }));
