@@ -64,5 +64,12 @@ removeUnverifiedAccounts();
 
 app.use(errorMiddleware);
 
+
+
+const PORT = process.env.PORT || 4000;
+app.listen(PORT, () => {
+  console.log(`🚀 Server is running on http://localhost:${PORT}`);
+});
+
 // ✅ This is the only export needed for Vercel serverless
 export default app;
