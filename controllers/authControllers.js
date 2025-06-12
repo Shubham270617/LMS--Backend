@@ -131,6 +131,8 @@ export const logout = catchAsyncErrors(async (req, res, next) => {
     .cookie("token", "", {
       expires: new Date(Date.now()),
       httpOnly: true,
+      sameSite: "none",   // ✅ Required for Vercel / HTTPS frontend
+      secure: true        // ✅ Must match the original set-cookie flags
     })
     .json({
       success: true,
